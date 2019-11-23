@@ -11,6 +11,12 @@ parser.add_argument("--birthday", help="Das Geburtsdatum in YY-MM-DD",)
 parser.add_argument("--landline", help="Festnetznummer",)
 parser.add_argument("--mobile", help="Handynummer",)
 parser.add_argument("--mail", help="E-Mail",)
+# Ausgaben
+parser.add_argument("--get", help="?")
+parser.add_argument("--full", help="Gibt die Datenbank aus",)
+parser.add_argument("--names", help="Gibt die Id´s der Personen aus")
+parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
+
 args = parser.parse_args()
 
 # Werte
@@ -34,7 +40,7 @@ class Adressen:
                  street, number, place,
                  birthday, landline, mobile,
                  mail):
-        
+
         self.firstname = firstname
         self.lastname = lastname
         self.street = street

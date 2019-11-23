@@ -6,7 +6,7 @@ parser.add_argument("--firstname", help="Vorname",)
 parser.add_argument("--lastname", help="Nachname",)
 parser.add_argument("--street", help="Staße",)
 parser.add_argument("--number", help="Hausnumemr",)
-parser.add_argument("--postal-code", help="Postleitzahl", type=int, metavar="ZIP")
+parser.add_argument("--postal-code", help="Postleitzahl", type=int)
 parser.add_argument("--place", help="Ort",)
 parser.add_argument("--birthday", help="Das Geburtsdatum in YY-MM-DD",)
 parser.add_argument("--landline", help="Festnetznummer",)
@@ -19,28 +19,68 @@ parser.add_argument("--names", help="Gibt die Id´s der Personen aus")
 parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
 
 args = parser.parse_args()
-#^^
+
+# Werte
+firstname = args.firstname
+lastname = args.lastname
+street = args.street
+number = args.number
+place = args.place
+birthday = args.birthday
+landline = args.landline
+mobile = args.mobile
+mail = args.mail
+
+
+print(firstname)
+print(args)
+print(mobile)
+
 class Adressen:
-    def __init__(self, args):
+    def __init__(self,firstname, lastname,
+                 street, number, place,
+                 birthday, landline, mobile,
+                 mail):
 
-        self.firstname = args.firstname
-        self.lastname = args.lastname
-        self.street = args.street
-        self.number = args.number
-        self.place = args.place
-        self.brithday = args.birthday
-        self.landline = args.landline
-        self.mobile = args.mobile
-        self.mail = args.mail
+        self.firstname = firstname
+        self.lastname = lastname
+        self.street = street
+        self.number = number
+        self.place = place
+        self.brithday = birthday
+        self.landline = landline
+        self.mobile = mobile
+        self.mail = mail
 
-infos = Adressen(args)
-print(infos.mobile)
-class AddressDatabase():
-    try:
-        sqlcon = sqlite3.connect("Adressen.db")
-        cursor = sqlcon.cursor()
+class AddressDatabase:
 
-        sqltable = """CREATE TABLE Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    def __enter__(self):
+        return self
+
+    def __init__(self):
+        self.sqlcon = sqlite3.connect("Adressen.db")
+        self.cursor = self.sqlcon.cursor()
+
+    def close(self):
+        self.sqlcon.close()
+
+    def __exit__(self, ext_type, exc_value, traceback):
+        self.cursor.close()
+        if isinstance(exc_value, Exception):
+            self.sqlcon.rollback()
+        else:
+            self.sqlcon.commit()
+            self.sqlcon.close()
+
+    def execute(self, new_data):
+        self.cursor.execute(new_data)
+
+    def executemany(self, many_new_data):
+        self.create_table()
+        #self.cursor.executemany(""" REPLACE INTO Adressen(Id, Firstname,Lastname,Birthday,Street) VALUES(?,?,?,?,?,?,?,?,?,?,?)""", many_new_data)
+
+    def create_table(self):
+        self.cursor.execute("""CREATE TABLE if NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                              Firstname VARCHAR (50),
                                              Lastname VARCHAR(50),
                                              Birthday Varchar(50),
@@ -50,15 +90,7 @@ class AddressDatabase():
                                              Place VARCHAR(50),
                                              Landline VARCHAR (50),
                                              Mobile VARCHAR(50),
-                                             Mail VARCHAR(50));"""
-
-        cursor.execute(sqltable)
-        sqlcon.commit()
-        print("SQLite table created")
-
-
-    except sqlite3.Error as error:
-        print("Error while connecting to sqlite", error)
-
-    pass
+                                             Mail VARCHAR(50)); """)
+    def commit(self):
+        self.sqlcon.commit()
 #ToDo

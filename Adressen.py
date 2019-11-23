@@ -32,25 +32,21 @@ mobile = args.mobile
 mail = args.mail
 
 
-print(firstname)
-print(args)
-print(mobile)
 
 class Adressen:
-    def __init__(self,firstname, lastname,
-                 street, number, place,
-                 birthday, landline, mobile,
-                 mail):
-
-        self.firstname = firstname
-        self.lastname = lastname
-        self.street = street
-        self.number = number
-        self.place = place
-        self.brithday = birthday
-        self.landline = landline
-        self.mobile = mobile
-        self.mail = mail
+    def __init__(self,args):
+        self.args = args
+        self.firstname = args.firstname
+        self.lastname = args.lastname
+        self.street = args.street
+        self.number = args.number
+        self.place = args.place
+        self.brithday = args.birthday
+        self.landline = args.landline
+        self.mobile = args.mobile
+        self.mail = args.mail
+info = Adressen(args)
+print(info.firstname)
 
 class AddressDatabase:
 

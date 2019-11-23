@@ -1,4 +1,5 @@
 import argparse
+import sqlite3
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--firstname", help="Vorname",)
@@ -52,5 +53,29 @@ class Adressen:
         self.mail = mail
 
 class AddressDatabase():
+    try:
+        sqlcon = sqlite3.connect("Adressen.db")
+        cursor = sqlcon.cursor()
+
+        sqltable = """CREATE TABLE Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                             Firstname VARCHAR (50),
+                                             Lastname VARCHAR(50),
+                                             Birthday Varchar(50),
+                                             Street VARCHAR (50),
+                                             Number VARCHAR(50),
+                                             Postalcode INTEGER,
+                                             Place VARCHAR(50),
+                                             Landline VARCHAR (50),
+                                             Mobile VARCHAR(50),
+                                             Mail VARCHAR(50));"""
+
+        cursor.execute(sqltable)
+        sqlcon.commit()
+        print("SQLite table created")
+
+
+    except sqlite3.Error as error:
+        print("Error while connecting to sqlite", error)
+
     pass
 #ToDo

@@ -20,18 +20,6 @@ parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
 
 args = parser.parse_args()
 
-# Werte
-firstname = args.firstname
-lastname = args.lastname
-street = args.street
-number = args.number
-place = args.place
-birthday = args.birthday
-landline = args.landline
-mobile = args.mobile
-mail = args.mail
-
-
 
 class Adressen:
     def __init__(self,args):

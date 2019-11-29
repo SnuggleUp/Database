@@ -12,7 +12,9 @@ parser.add_argument("--birthday", help="Das Geburtsdatum in YY-MM-DD",)
 parser.add_argument("--landline", help="Festnetznummer",)
 parser.add_argument("--mobile", help="Handynummer",)
 parser.add_argument("--mail", help="E-Mail",)
-# Ausgaben
+# Abfragen
+parser.add_argument("--update", help="hinzufügen")
+parser.add_argument("--delete", help="etwas löschen")
 parser.add_argument("--get", help="?", )
 parser.add_argument("--full", help="Gibt die Datenbank aus",)
 parser.add_argument("--names", help="Gibt die Id´s der Personen aus")
@@ -34,24 +36,32 @@ class Adressen:
         self.landline = args.landline
         self.mobile = args.mobile
         self.mail = args.mail
+
         self.insert_list = [args.firstname, args.lastname, args.birthday, args.street,
                             args.number, args.postal_code, args.place, args.landline, args.mobile, args.mail]
 
 
-
-
-info = Adressen(args)
-print(info.insert_list)
-print(info.insert_list[0])
-
-
 class Abfragen:
-    def __init__(self,args):
+    def __init__(self, args):
         self.args = args
         self.get = args.get
         self.full = args.full
         self.names = args.names
         self.field = args.field
+        self.update = args.update
+        self.delete = args.delete
+
+
+a_info = Abfragen(args)
+info = Adressen(args)
+if a_info.update:
+    info.insert_list.insert(0, "ALTER")
+
+if a_info.delete:
+    info.insert_list.insert(0, "DELETE")
+
+print(info.insert_list)
+print(info.insert_list[0], info.insert_list[1], info.insert_list[2], info.insert_list[3])
 
 
 class AddressDatabase:
@@ -79,7 +89,8 @@ class AddressDatabase:
 
     def executemany(self, many_new_data):
         self.create_table()
-        #self.cursor.executemany(""" REPLACE INTO Adressen(Id, Firstname,Lastname,Birthday,Street) VALUES(?,?,?,?,?,?,?,?,?,?,?)""", many_new_data)
+        #self.cursor.executemany(""" REPLACE INTO Adressen(Id, Firstname,Lastname,Birthday,Street)
+        # VALUES(?,?,?,?,?,?,?,?,?,?,?)""", many_new_data)
 
     def create_table(self):
         self.cursor.execute("""CREATE TABLE if NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -13,7 +13,7 @@ parser.add_argument("--landline", help="Festnetznummer",)
 parser.add_argument("--mobile", help="Handynummer",)
 parser.add_argument("--mail", help="E-Mail",)
 # Ausgaben
-parser.add_argument("--get", help="?")
+parser.add_argument("--get", help="?", )
 parser.add_argument("--full", help="Gibt die Datenbank aus",)
 parser.add_argument("--names", help="Gibt die Id´s der Personen aus")
 parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
@@ -34,16 +34,15 @@ class Adressen:
         self.landline = args.landline
         self.mobile = args.mobile
         self.mail = args.mail
-        self.insert_list = [args.firstname, args.lastname, args.street, args.number, args.postal_code, args.place,
-                            args.birthday, args.landline, args.mobile, args.mail]
+        self.insert_list = [args.firstname, args.lastname, args.birthday, args.street,
+                            args.number, args.postal_code, args.place, args.landline, args.mobile, args.mail]
 
 
 
 
 info = Adressen(args)
-print(info.firstname)
 print(info.insert_list)
-print("Test")
+print(info.insert_list[0])
 
 
 class Abfragen:
@@ -56,6 +55,9 @@ class Abfragen:
 
 
 class AddressDatabase:
+
+    def __enter__(self):
+        return self
 
     def __init__(self):
         self.sqlcon = sqlite3.connect("Adressen.db")

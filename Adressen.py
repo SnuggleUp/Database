@@ -1,6 +1,6 @@
 import argparse
 import sqlite3
-
+# Eingaben
 parser = argparse.ArgumentParser()
 parser.add_argument("--firstname", help="Vorname",)
 parser.add_argument("--lastname", help="Nachname",)
@@ -35,6 +35,16 @@ class Adressen:
         self.mail = args.mail
 info = Adressen(args)
 print(info.firstname)
+print(info.lastname)
+
+class Abfragen:
+    def __init__(self,args):
+        self.args = args
+        self.get = args.get
+        self.full = args.full
+        self.names = args.names
+        self.field = args.field
+
 
 class AddressDatabase:
 

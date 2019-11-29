@@ -28,14 +28,23 @@ class Adressen:
         self.lastname = args.lastname
         self.street = args.street
         self.number = args.number
+        self.postal_code = args.postal_code
         self.place = args.place
         self.brithday = args.birthday
         self.landline = args.landline
         self.mobile = args.mobile
         self.mail = args.mail
+        self.insert_list = [args.firstname, args.lastname, args.street, args.number, args.postal_code, args.place,
+                            args.birthday, args.landline, args.mobile, args.mail]
+
+
+
+
 info = Adressen(args)
 print(info.firstname)
-print(info.lastname)
+print(info.insert_list)
+print("Test")
+
 
 class Abfragen:
     def __init__(self,args):
@@ -47,9 +56,6 @@ class Abfragen:
 
 
 class AddressDatabase:
-
-    def __enter__(self):
-        return self
 
     def __init__(self):
         self.sqlcon = sqlite3.connect("Adressen.db")

@@ -44,12 +44,13 @@ class Adressen:
 class Abfragen:
     def __init__(self, args):
         self.args = args
+        self.update = args.update
+        self.delete = args.delete
         self.get = args.get
         self.full = args.full
         self.names = args.names
         self.field = args.field
-        self.update = args.update
-        self.delete = args.delete
+
 
 
 a_info = Abfragen(args)
@@ -59,6 +60,19 @@ if a_info.update:
 
 if a_info.delete:
     info.insert_list.insert(0, "DELETE")
+
+if a_info.get:
+    pass
+
+if a_info.full:
+    pass
+
+if a_info.names:
+    pass
+
+if a_info.field:
+    pass
+
 
 print(info.insert_list)
 print(info.insert_list[0], info.insert_list[1], info.insert_list[2], info.insert_list[3])

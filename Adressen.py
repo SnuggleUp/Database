@@ -105,7 +105,7 @@ class AddressDatabase:
 
     def create_table(self):
         """create a database table if it does not exist already"""
-        create = self.cursor.execute("""CREATE TABLE IF NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                              Firstname VARCHAR (50),
                                              Lastname VARCHAR(50),
                                              Birthday Varchar(50),
@@ -119,3 +119,6 @@ class AddressDatabase:
 
     def commit(self):
         self.connection.commit()
+
+AddressDatabase = AddressDatabase()
+AddressDatabase.create_table()

@@ -31,17 +31,6 @@ args = parser.parse_args()
 
 class Adressen:
     def __init__(self, args):
-        self.args = args
-        self.firstname = args.firstname
-        self.lastname = args.lastname
-        self.street = args.street
-        self.number = args.number
-        self.postal_code = args.postal_code
-        self.place = args.place
-        self.brithday = args.birthday
-        self.landline = args.landline
-        self.mobile = args.mobile
-        self.mail = args.mail
 
         self.action_dic = {"firstname": args.firstname, "lastname": args.lastname,"birthday": args.birthday,
                            "street": args.street, "number": args.number,"postal_code": args.postal_code,
@@ -84,7 +73,7 @@ elif a_info.field:
     pass
 
 else:
-    info.action_dic[info] = "INSERT"
+    info.action_dic["sql_info"] = "INSERT"
 
 print(info.action_dic)
 print(info.action_dic["lastname"],)

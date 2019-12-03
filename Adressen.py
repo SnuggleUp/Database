@@ -43,8 +43,9 @@ class Adressen:
         self.mobile = args.mobile
         self.mail = args.mail
 
-        self.insert_list = [args.firstname, args.lastname, args.birthday, args.street,
-                            args.number, args.postal_code, args.place, args.landline, args.mobile, args.mail]
+        self.action_dic = {"firstname": args.firstname, "lastname": args.lastname,"birthday": args.birthday,
+                           "street": args.street, "number": args.number,"postal_code": args.postal_code,
+                           "place": args.place, "landlline": args.landline,"mobile": args.mobile, "mail": args.mail}
 
 
 class Abfragen:
@@ -65,10 +66,10 @@ class Abfragen:
 a_info = Abfragen(args)
 info = Adressen(args)
 if a_info.update:
-    info.insert_list.insert(0, "ALTER")
+    info.action_dic["sql_info"] = "ALTER"
 
 elif a_info.delete:
-    info.insert_list.insert(0, "DELETE")
+    info.action_dic["sql_info"] = "DELETE"
 
 elif a_info.get:
     pass
@@ -83,10 +84,10 @@ elif a_info.field:
     pass
 
 else:
-    info.insert_list.insert(0, "INSERT")
+    info.action_dic[info] = "INSERT"
 
-print(info.insert_list)
-print(info.insert_list[0], info.insert_list[1], info.insert_list[2], info.insert_list[3])
+print(info.action_dic)
+print(info.action_dic["lastname"],)
 
 class AddressDatabase:
 

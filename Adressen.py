@@ -13,12 +13,12 @@ parser.add_argument("--landline", help="Festnetznummer",)
 parser.add_argument("--mobile", help="Handynummer",)
 parser.add_argument("--mail", help="E-Mail",)
 # Abfragen
-parser.add_argument("--update", help="hinzufügen")
-parser.add_argument("--delete", help="etwas löschen")
-parser.add_argument("--get", help="?", )
-parser.add_argument("--full", help="Gibt die Datenbank aus",)
-parser.add_argument("--names", help="Gibt die Id´s der Personen aus")
-parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
+parser.add_argument("--update", action="store_true", help="hinzufügen")
+parser.add_argument("--delete", action="store_true", help="etwas löschen")
+parser.add_argument("--get", action="store_true", help="?", )
+parser.add_argument("--full", action="store_true", help="Gibt die Datenbank aus")
+parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
+parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten wert aus")
 
 args = parser.parse_args()
 
@@ -58,21 +58,23 @@ info = Adressen(args)
 if a_info.update:
     info.insert_list.insert(0, "ALTER")
 
-if a_info.delete:
+elif a_info.delete:
     info.insert_list.insert(0, "DELETE")
 
-if a_info.get:
+elif a_info.get:
     pass
 
-if a_info.full:
+elif a_info.full:
     pass
 
-if a_info.names:
+elif a_info.names:
     pass
 
-if a_info.field:
+elif a_info.field:
     pass
 
+else:
+    info.insert_list.insert(0, "INSERT")
 
 print(info.insert_list)
 print(info.insert_list[0], info.insert_list[1], info.insert_list[2], info.insert_list[3])

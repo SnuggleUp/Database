@@ -90,7 +90,7 @@ class AddressDatabase:
         """add many new data to database in one go"""
         self.create_table()
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
-                                Place,Landline,Mobile,Mail) VALUES(?,?,?,?,?,?,?,?,?,?,?);""", new_data)
+                                Place,Landline,Mobile,Mail) VALUES(0,?,?,?,?,?,?,?,?,?,?);""", new_data)
 
     def create_table(self):
         """create a database table if it does not exist already"""
@@ -111,3 +111,8 @@ class AddressDatabase:
 
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
+
+print(AddressDatabase.commit())
+
+
+

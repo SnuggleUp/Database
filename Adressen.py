@@ -85,31 +85,27 @@ class AddressDatabase:
     def __enter__(self):
         return self
 
+    def __del__(self):
+        self.__db_connection.close()
+
     def __init__(self):
-        self.sqlcon = sqlite3.connect("Adressen.db")
-        self.cursor = self.sqlcon.cursor()
+        """Initialize db class variables"""
+        self.connection = sqlite3.connect("Adressen.db")
+        self.cur = self.connection.cursor()
 
-    def close(self):
-        self.sqlcon.close()
-
-    def __exit__(self, ext_type, exc_value, traceback):
+    def __exit__(self):
         self.cursor.close()
-        if isinstance(exc_value, Exception):
-            self.sqlcon.rollback()
-        else:
-            self.sqlcon.commit()
-            self.sqlcon.close()
+
 
     def execute(self, new_data):
-        self.cursor.execute(new_data)
-
-    def executemany(self, many_new_data):
+        """add many new data to database in one go"""
         self.create_table()
-        #self.cursor.executemany(""" REPLACE INTO Adressen(Id, Firstname,Lastname,Birthday,Street)
-        # VALUES(?,?,?,?,?,?,?,?,?,?,?)""", many_new_data)
+        self.cur.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
+                                Place,Landline,Mobile,Mail) VALUES(?,?,?,?,?,?,?,?,?,?,?,?);""", new_data)
 
     def create_table(self):
-        self.cursor.execute("""CREATE TABLE if NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        """create a database table if it does not exist already"""
+        self.cur.execute("""CREATE TABLE IF NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                              Firstname VARCHAR (50),
                                              Lastname VARCHAR(50),
                                              Birthday Varchar(50),
@@ -120,6 +116,6 @@ class AddressDatabase:
                                              Landline VARCHAR (50),
                                              Mobile VARCHAR(50),
                                              Mail VARCHAR(50)); """)
+
     def commit(self):
-        self.sqlcon.commit()
-#ToDo
+        self.connection.commit()

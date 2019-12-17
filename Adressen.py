@@ -80,17 +80,18 @@ class AddressDatabase:
 
     def __init__(self):
         """Initialize db class variables"""
-        self.connection = sqlite3.connect("Adressen.db")
+        self.connection = sqlite3.connect("Address.db")
         self.cursor = self.connection.cursor()
 
     def __exit__(self):
         self.cursor.close()
 
-    def execute(self, new_data):
+    def execute(self, data):
         """add many new data to database in one go"""
         self.create_table()
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
-                                Place,Landline,Mobile,Mail) VALUES(0,?,?,?,?,?,?,?,?,?,?);""", new_data)
+                                Place,Landline,Mobile,Mail) VALUES(0,?,?,?,?,?,?,
+                                ?,?,?,?);""", data)
 
     def create_table(self):
         """create a database table if it does not exist already"""
@@ -109,8 +110,12 @@ class AddressDatabase:
     def commit(self):
         self.connection.commit()
 
+    def delete(self):
+        self.cursor.execute("""DELETE FROM Adressen WHERE ? """)
+
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
+
 
 print(AddressDatabase.commit())
 

@@ -1,7 +1,7 @@
 import argparse
 import sqlite3
 
-# Eingaben
+# Eingabe
 parser = argparse.ArgumentParser()
 parser.add_argument("--firstname", help="Vorname", )
 parser.add_argument("--lastname", help="Nachname", )

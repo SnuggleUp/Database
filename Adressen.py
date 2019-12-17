@@ -1,7 +1,7 @@
 import argparse
 import sqlite3
 
-# Eingabe
+# Eingaben
 parser = argparse.ArgumentParser()
 parser.add_argument("--firstname", help="Vorname", )
 parser.add_argument("--lastname", help="Nachname", )
@@ -23,13 +23,15 @@ parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten we
 
 args = parser.parse_args()
 
-
 class Adressen:
     def __init__(self, args):
+        self.action_tub = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
+                           args.place, args.landline, args.mobile, args.mail)
 
         self.action_dic = {"firstname": args.firstname, "lastname": args.lastname,"birthday": args.birthday,
                            "street": args.street, "number": args.number,"postal_code": args.postal_code,
                            "place": args.place, "landlline": args.landline,"mobile": args.mobile, "mail": args.mail}
+        self.ja = tuple(self.action_dic)
 
 
 class Abfragen:
@@ -52,7 +54,7 @@ elif a_info.delete:
     info.action_dic["sql_info"] = "DELETE"
 
 elif a_info.get:
-    pass
+    info.action_dic["sql_info"] = "GET"
 
 elif a_info.full:
     pass
@@ -65,9 +67,15 @@ elif a_info.field:
 
 else:
     info.action_dic["sql_info"] = "INSERT"
+ #   info.action_tub  "INSERT"
 
 print(info.action_dic)
 print(info.action_dic["lastname"],)
+print(info.action_tub)
+print(info.action_tub[0])
+print(info.ja)
+#ToDo
+# search, get, full finishen
 
 
 class AddressDatabase:
@@ -80,18 +88,17 @@ class AddressDatabase:
 
     def __init__(self):
         """Initialize db class variables"""
-        self.connection = sqlite3.connect("Address.db")
+        self.connection = sqlite3.connect("Adressen.db")
         self.cursor = self.connection.cursor()
 
     def __exit__(self):
         self.cursor.close()
 
-    def execute(self, data):
+    def execute(self, new_data):
         """add many new data to database in one go"""
         self.create_table()
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
-                                Place,Landline,Mobile,Mail) VALUES(0,?,?,?,?,?,?,
-                                ?,?,?,?);""", data)
+                                Place,Landline,Mobile,Mail) VALUES(?,?,?,?,?,?,?,?,?,?,?);""", new_data)
 
     def create_table(self):
         """create a database table if it does not exist already"""
@@ -110,14 +117,6 @@ class AddressDatabase:
     def commit(self):
         self.connection.commit()
 
-    def delete(self):
-        self.cursor.execute("""DELETE FROM Adressen WHERE ? """)
-
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
-
-
-print(AddressDatabase.commit())
-
-
 

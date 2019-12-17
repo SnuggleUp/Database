@@ -32,7 +32,7 @@ class Adressen:
         self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
                            "street": args.street, "number": args.number, "postal_code": args.postal_code,
                            "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
-        self.ja = tuple(self.action_dic)
+        self.ja = tuple(self.action_dic.values())
 
 
 class Abfragen:
@@ -71,6 +71,7 @@ else:
 
 print(info.action_dic)
 print(info.action_dic["lastname"], )
+print(info.ja)
 
 
 class AddressDatabase:
@@ -120,9 +121,13 @@ class AddressDatabase:
     def update(self):
         pass
 
+    def select(self):
+        pass
+
 
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
 
 AddressDatabase.execute(data=info.action_tub)
+
 print(AddressDatabase.commit())

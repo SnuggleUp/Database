@@ -15,7 +15,7 @@ parser.add_argument("--mobile", help="Handynummer", )
 parser.add_argument("--mail", help="E-Mail", )
 # Abfragen
 parser.add_argument("--update", action="store_true", help="hinzufügen")
-parser.add_argument("--delete", help="etwas löschen")
+parser.add_argument("--delete", help="etwas löschen",)
 parser.add_argument("--get", action="store_true", help="?", )
 parser.add_argument("--full", action="store_true", help="Gibt die Datenbank aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
@@ -121,14 +121,12 @@ class AddressDatabase:
 
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
-
-AddressDatabase.execute(data=info.action_tub)
+if info.action_tub[0] and info.action_tub[1] and info.action_tub is not None:
+    AddressDatabase.execute(data=info.action_tub)
 
 if test.delete is not None:
     AddressDatabase.delete(data=test.delete)
  
-else:
-    pass
 
 
 print(AddressDatabase.commit())

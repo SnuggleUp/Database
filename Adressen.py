@@ -15,7 +15,7 @@ parser.add_argument("--mobile", help="Handynummer", )
 parser.add_argument("--mail", help="E-Mail", )
 # Abfragen
 parser.add_argument("--update", action="store_true", help="hinzufügen")
-parser.add_argument("--delete", action="store_true", help="etwas löschen")
+parser.add_argument("--delete", help="etwas löschen")
 parser.add_argument("--get", action="store_true", help="?", )
 parser.add_argument("--full", action="store_true", help="Gibt die Datenbank aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
@@ -23,7 +23,7 @@ parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten we
 
 args = parser.parse_args()
 
-
+print(args.delete)
 class Adressen:
     def __init__(self, args):
         self.action_tub = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
@@ -43,13 +43,13 @@ class Abfragen:
         self.full = args.full
         self.names = args.names
         self.field = args.field
-
+        print(args.delete)
 
 
 info = Adressen(args)
 
-print(info.action_tub)
-print(info.action_dic["lastname"], )
+#print(info.action_tub)
+#print(info.action_dic["lastname"], )
 #ToDo
 # Multible inserts bearbeiten
 # 

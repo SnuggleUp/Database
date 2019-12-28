@@ -99,14 +99,17 @@ class AddressDatabase:
     def commit(self):
         self.connection.commit()
 
-    def delete(self):
-        self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """)
+    def delete(self,data):
+        self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """,data)
     def update(self):
         self.cursor.execute("""UPDATE Adressen SET ? = ? WHERE Id = ? """)
     def search(self):
         self.cursor.execute("""SELECT ? FROM Adressen""")
     def get(self):
         pass
+
+    def full(self):
+        self.cursor.execute("""SELECT * FROM Adressen""")
 
     def select(self):
         pass

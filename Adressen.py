@@ -61,14 +61,13 @@ class AddressDatabase:
 
     def __init__(self):
         """Initialize db class variables"""
-        self.connection = sqlite3.connect("Address.db")
+        self.connection = sqlite3.connect("Address.db", isolation_level=None)
         self.cursor = self.connection.cursor()
 
     def __exit__(self):
         self.cursor.close()
 
     def __add__(self, other):
-
         pass
 
     def execute(self, data):
@@ -96,9 +95,12 @@ class AddressDatabase:
         self.connection.commit()
 
     def delete(self):
-        self.cursor.execute("""DELETE FROM Adressen WHERE ? = ? """)
-
+        self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """)
     def update(self):
+        self.cursor.execute("""UPDATE Adressen SET ? = ? WHERE Id = ? """)
+    def search(self):
+        self.cursor.execute("""SELECT ? FROM Adressen""")
+    def get(self):
         pass
 
     def select(self):

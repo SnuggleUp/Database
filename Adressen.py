@@ -23,7 +23,7 @@ parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten we
 
 args = parser.parse_args()
 
-print(args.delete)
+
 class Adressen:
     def __init__(self, args):
         self.action_tub = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
@@ -43,11 +43,16 @@ class Abfragen:
         self.full = args.full
         self.names = args.names
         self.field = args.field
-        print(args.delete)
+        if args.delete is True:
+            AddressDatabase.delete(data=args.delete)
+        else:
+            pass
+
 
 
 info = Adressen(args)
-
+test = Abfragen(args)
+print(test.delete)
 #print(info.action_tub)
 #print(info.action_dic["lastname"], )
 #ToDo

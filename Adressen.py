@@ -125,8 +125,8 @@ AddressDatabase.create_table()
 AddressDatabase.execute(data=info.action_tub)
 
 if test.delete is not None:
-    AddressDatabase.delete()
-    AddressDatabase.execute(data=test.delete)
+    AddressDatabase.delete(data=test.delete)
+ 
 else:
     pass
 

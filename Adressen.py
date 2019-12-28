@@ -43,16 +43,19 @@ class Abfragen:
         self.full = args.full
         self.names = args.names
         self.field = args.field
-        if args.delete is True:
-            AddressDatabase.delete(data=args.delete)
-        else:
-            pass
+        print(args.delete)
+
+
+
+
+
 
 
 
 info = Adressen(args)
 test = Abfragen(args)
 print(test.delete)
+
 #print(info.action_tub)
 #print(info.action_dic["lastname"], )
 #ToDo
@@ -115,9 +118,17 @@ class AddressDatabase:
         pass
 
 
+
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
 
 AddressDatabase.execute(data=info.action_tub)
+
+if test.delete is not None:
+    AddressDatabase.delete()
+    AddressDatabase.execute(data=test.delete)
+else:
+    pass
+
 
 print(AddressDatabase.commit())

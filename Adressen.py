@@ -32,7 +32,6 @@ class Adressen:
         self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
                            "street": args.street, "number": args.number, "postal_code": args.postal_code,
                            "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
-        self.ja = tuple(self.action_dic.values())
 
 
 class Abfragen:
@@ -46,33 +45,14 @@ class Abfragen:
         self.field = args.field
 
 
-a_info = Abfragen(args)
+
 info = Adressen(args)
-if a_info.update:
-    info.action_dic["sql_info"] = "ALTER"
 
-elif a_info.delete:
-    info.action_dic["sql_info"] = "DELETE"
-
-elif a_info.get:
-    pass
-
-elif a_info.full:
-    pass
-
-elif a_info.names:
-    pass
-
-elif a_info.field:
-    pass
-
-else:
-    info.action_dic["sql_info"] = "INSERT"
-
-print(info.action_dic)
+print(info.action_tub)
 print(info.action_dic["lastname"], )
-print(info.ja)
-
+#ToDo
+# Multible inserts bearbeiten
+# 
 
 class AddressDatabase:
 

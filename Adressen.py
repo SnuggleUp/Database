@@ -114,8 +114,8 @@ class AddressDatabase:
     def full(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
 
-    def select(self):
-        self.cursor.execute("""SELECT * FROM Adressen where Id = ? """)
+    def select(self, data):
+        self.cursor.execute("""SELECT * FROM Adressen where Id = ? """.replace("?",data[0]), data)
 
 
 AddressDatabase = AddressDatabase()
@@ -123,9 +123,9 @@ AddressDatabase.create_table()
 if info.action_tub[0] and info.action_tub[1] and len(
         tuple(itertools.filterfalse(None, info.action_tub))) < 8:
     AddressDatabase.execute(data=info.action_tub)
+else:
+    print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
 
 if test.delete is not None:
     AddressDatabase.delete(data=test.delete)
-#
-AddressDatabase.full()
-print(AddressDatabase.commit())
+

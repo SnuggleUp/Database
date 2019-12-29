@@ -109,13 +109,13 @@ class AddressDatabase:
         self.cursor.execute("""SELECT ? FROM Adressen""")
 
     def get(self):
-        self.cursor.execute("""SELECT id, firstname, lastname FROM Adressen""")
+        self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen""")
 
     def full(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
 
     def select(self):
-        pass
+        self.cursor.execute("""SELECT * FROM Adressen where Id = ? """)
 
 
 AddressDatabase = AddressDatabase()

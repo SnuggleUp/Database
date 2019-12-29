@@ -113,7 +113,8 @@ class AddressDatabase:
     def full(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
         rows = self.cursor.fetchall()
-        print(rows)
+        for row in rows:
+            print(row)
 
     def select(self, data):
         self.cursor.execute("""SELECT * FROM Adressen where Id = ? """.replace("?",data[0]), data)

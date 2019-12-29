@@ -44,6 +44,7 @@ class Abfragen:
         self.full = args.full
         self.names = args.names
         self.field = args.field
+        self.list = args.list
 
 test = Abfragen(args)  
 info = Adressen(args)
@@ -110,7 +111,7 @@ class AddressDatabase:
     def get(self):
         self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen""")
 
-    def full(self):
+    def list(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
         rows = self.cursor.fetchall()
         for row in rows:
@@ -131,5 +132,5 @@ else:
 if test.delete is not None:
     AddressDatabase.delete(data=test.delete)
 
-if test.full is True:
-    AddressDatabase.full()
+if test.list is True:
+    AddressDatabase.list()

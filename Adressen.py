@@ -18,10 +18,10 @@ parser.add_argument("--mail", help="E-Mail", )
 parser.add_argument("--update", action="store_true", help="hinzufügen")
 parser.add_argument("--delete", help="etwas löschen", )
 parser.add_argument("--get", action="store_true", help="?", )
-parser.add_argument("--full", action="store_true", help="Gibt die Datenbank aus")
+parser.add_argument("--full", action="store_true", help="Gibt die eine ganze zeile aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
 parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten wert aus")
-
+parser.add_argument("--list", action="store_true", help="Gibt die Datenbank aus ")
 args = parser.parse_args()
 
 
@@ -44,11 +44,10 @@ class Abfragen:
         self.full = args.full
         self.names = args.names
         self.field = args.field
-        print(args.delete)
 
-
+test = Abfragen(args)  
 info = Adressen(args)
-test = Abfragen(args)
+
 print(test.delete)
 
 
@@ -113,6 +112,8 @@ class AddressDatabase:
 
     def full(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
+        rows = self.cursor.fetchall()
+        print(rows)
 
     def select(self, data):
         self.cursor.execute("""SELECT * FROM Adressen where Id = ? """.replace("?",data[0]), data)
@@ -129,3 +130,5 @@ else:
 if test.delete is not None:
     AddressDatabase.delete(data=test.delete)
 
+if test.full is True:
+    AddressDatabase.full()

@@ -1,5 +1,6 @@
 import argparse
 import sqlite3
+import itertools
 
 # Eingabe
 parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ parser.add_argument("--mobile", help="Handynummer", )
 parser.add_argument("--mail", help="E-Mail", )
 # Abfragen
 parser.add_argument("--update", action="store_true", help="hinzufügen")
-parser.add_argument("--delete", help="etwas löschen",)
+parser.add_argument("--delete", help="etwas löschen", )
 parser.add_argument("--get", action="store_true", help="?", )
 parser.add_argument("--full", action="store_true", help="Gibt die Datenbank aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
@@ -46,19 +47,14 @@ class Abfragen:
         print(args.delete)
 
 
-
-
-
-
-
-
 info = Adressen(args)
 test = Abfragen(args)
 print(test.delete)
 
-#print(info.action_tub)
-#print(info.action_dic["lastname"], )
-#ToDo
+
+# print(info.action_tub)
+# print(info.action_dic["lastname"], )
+# ToDo
 # Multible inserts bearbeiten
 # 
 
@@ -84,6 +80,7 @@ class AddressDatabase:
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
                                 Place,Landline,Mobile,Mail) VALUES(NULL,?,?,?,?,?,?,
                                 ?,?,?,?);""", data)
+        print(data)
 
     def create_table(self):
         """create a database table if it does not exist already"""
@@ -102,14 +99,17 @@ class AddressDatabase:
     def commit(self):
         self.connection.commit()
 
-    def delete(self,data):
-        self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """,data)
+    def delete(self, data):
+        self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """, data)
+
     def update(self):
         self.cursor.execute("""UPDATE Adressen SET ? = ? WHERE Id = ? """)
+
     def search(self):
         self.cursor.execute("""SELECT ? FROM Adressen""")
+
     def get(self):
-        pass
+        self.cursor.execute("""SELECT id, firstname, lastname FROM Adressen""")
 
     def full(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
@@ -118,15 +118,14 @@ class AddressDatabase:
         pass
 
 
-
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
-if info.action_tub[0] and info.action_tub[1] and info.action_tub is not None:
+if info.action_tub[0] and info.action_tub[1] and len(
+        tuple(itertools.filterfalse(None, info.action_tub))) < 8:
     AddressDatabase.execute(data=info.action_tub)
 
 if test.delete is not None:
     AddressDatabase.delete(data=test.delete)
- 
 
-
+AddressDatabase.full()
 print(AddressDatabase.commit())

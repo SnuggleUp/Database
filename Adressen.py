@@ -17,7 +17,7 @@ parser.add_argument("--mail", help="E-Mail", )
 # Abfragen
 parser.add_argument("--update", action="store_true", help="hinzufügen")
 parser.add_argument("--delete", help="etwas löschen", )
-parser.add_argument("--get", action="store_true", help="?", )
+parser.add_argument("--get", help="?", )
 parser.add_argument("--full", action="store_true", help="Gibt die eine ganze zeile aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
 parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten wert aus")
@@ -74,13 +74,6 @@ class AddressDatabase:
     def __add__(self, other):
         pass
 
-    def execute(self, data):
-        """add new data to database in one go"""
-        self.create_table()
-        self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
-                                Place,Landline,Mobile,Mail) VALUES(NULL,?,?,?,?,?,?,
-                                ?,?,?,?);""", data)
-        print(data)
 
     def create_table(self):
         """create a database table if it does not exist already"""
@@ -96,20 +89,51 @@ class AddressDatabase:
                                              Mobile VARCHAR(50),
                                              Mail VARCHAR(50)); """)
 
-    def commit(self):
-        self.connection.commit()
+
+    def insert(self, data):
+        """add new data to database in one go"""
+        self.create_table()
+        self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
+                                Place,Landline,Mobile,Mail) VALUES(NULL,?,?,?,?,?,?,
+                                ?,?,?,?);""", data)
+        print(data)
+
+    def get_name(self, data):
+        self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen WHERE Id = ?""",data)
+
+    def get_full(self, data):
+        self.cursor.execute("""SELECT * FROM Adressen where Id = ? """,data)
+
+    def get_field(self, data):
+        self.cursor.execute("SELECT ~ FROM Adressen WHERE Id = ?".replace("~", data[0]), data[1])
+
+    def names(self, data):
+        self.cursor.execute("SELECT Id, Firstname, Lastname FROM Adressen "
+                            "WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
+                            "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
+                            "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
+                            "ORDER BY lastname,firstname DESC", data)
+
+    def field(self, data):
+        self.cursor.execute("SELECT ~ FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
+                    "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
+                    "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
+                    "ORDER BY lastname,firstname DESC".replace("~",data[0]),data[1])
+
+    def full(self, data):
+        self.cursor.execute("SELECT * FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
+                     "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
+                     "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
+                     "ORDER BY lastname,firstname DESC", data)
 
     def delete(self, data):
         self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """, data)
 
-    def update(self):
-        self.cursor.execute("""UPDATE Adressen SET ? = ? WHERE Id = ? """)
+    def update(self, data):
+        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[3]),data)
 
-    def search(self):
-        self.cursor.execute("""SELECT ? FROM Adressen""")
-
-    def get(self):
-        self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen""")
+    def search(self, data):
+        self.cursor.execute("""SELECT ? FROM Adressen WHERE Id = ?""".replace("?",data[0]),data )
 
     def list(self):
         self.cursor.execute("""SELECT * FROM Adressen""")
@@ -117,15 +141,11 @@ class AddressDatabase:
         for row in rows:
             print(row)
 
-    def select(self, data):
-        self.cursor.execute("""SELECT * FROM Adressen where Id = ? """.replace("?",data[0]), data)
-
-
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
 if info.action_tub[0] and info.action_tub[1] and len(
         tuple(itertools.filterfalse(None, info.action_tub))) < 8:
-    AddressDatabase.execute(data=info.action_tub)
+    AddressDatabase.insert(data=info.action_tub)
 else:
     print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
 

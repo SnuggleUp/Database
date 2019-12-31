@@ -46,10 +46,6 @@ class AddressDatabase:
         """Closes the cursor"""
         self.cursor.close()
 
-    def __add__(self, other):
-        pass
-
-
     def create_table(self):
         """create a database table if it does not exist already"""
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,7 +67,6 @@ class AddressDatabase:
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
                                 Place,Landline,Mobile,Mail) VALUES(NULL,?,?,?,?,?,?,
                                 ?,?,?,?);""", data)
-        print(data)
 
     def get_name(self, data):
         """Prints the names and the id"""
@@ -131,7 +126,7 @@ class AddressDatabase:
 
     def update(self, data):
         """Updates the table"""
-        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[3]),data)
+        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[1]),data)
 
     def list(self):
         """Outputs the whole Database"""
@@ -154,10 +149,10 @@ class Adressen:
                            "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
         # insert
         if self.action_tup[0] and self.action_tup[1] and len(
-                tuple(itertools.filterfalse(None, self.action_tup))) < 8:
+                tuple(itertools.filterfalse("/", self.action_tup))) < 8:
             AddressDatabase.insert(data=self.action_tup)
         elif self.action_tup[0] and self.action_tup[1] and len(
-                tuple(itertools.filterfalse(None, self.action_tup))) < 9:
+                tuple(itertools.filterfalse("/", self.action_tup))) < 9:
             print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
 class Abfragen:
     def __init__(self, args):
@@ -188,4 +183,3 @@ class Abfragen:
 
 Abfragen(args)
 Adressen(args)
-#

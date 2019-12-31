@@ -87,17 +87,17 @@ class AddressDatabase:
         self.cursor.execute("""SELECT * FROM Adressen where Id = ? """,data)
         row = self.cursor.fetchall()
         id_info = row[0]
-        print("Id:", id_info[0],
-              "Firstname:", id_info[1],
-              "Lastname:", id_info[2],
-              "Birthday:", id_info[3],
-              "Street:", id_info[4],
-              "Number:", id_info[5],
-              "Postalcode:", id_info[6],
-              "Place:", id_info[7],
-              "Landline:", id_info[8],
-              "Mobile:", id_info[9],
-              "Mail:", id_info[10])
+        print("Id:\t", id_info[0],
+              "\nFirstname:\t", id_info[1],
+              "\nLastname:\t", id_info[2],
+              "\nBirthday:\t", id_info[3],
+              "\nStreet:\t", id_info[4],
+              "\nNumber:\t", id_info[5],
+              "\nPostalcode:\t", id_info[6],
+              "\nPlace:\t", id_info[7],
+              "\nLandline:\t", id_info[8],
+              "\nMobile:\t", id_info[9],
+              "\nMail:\t", id_info[10])
 
     def get_field(self, data):
         """This Program outputs the requestet values"""
@@ -172,12 +172,12 @@ class Adressen:
                 self.action_tup.append(element)
 
         # insert
-        if self.action_tup[0] and self.action_tup[1] and len(
-                tuple(itertools.filterfalse(None, self.action_tup))) < 8:
+        if self.action_tup[0] and self.action_tup[1] and self.action_tup.count("/") < 8:
             AddressDatabase.insert(data=self.action_tup)
-        elif self.action_tup[0] and self.action_tup[1] and len(
-                tuple(itertools.filterfalse(None, self.action_tup))) < 9:
+        elif self.action_tup[0] and self.action_tup[1] and self.action_tup.count("/") == 8:
             print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
+        else:
+            pass
 
 
 

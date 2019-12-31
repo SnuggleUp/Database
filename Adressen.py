@@ -20,7 +20,7 @@ parser.add_argument("--delete", "-del", help="etwas löschen", )
 parser.add_argument("--get", help="Gibt zu einer ID den Vornamen und Nachnamen aus ", type=int)
 parser.add_argument("--full", action="store_true", help="Gibt die eine ganze zeile aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
-parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten wert aus")
+parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
 parser.add_argument("--list", action="store_true", help="Gibt die Datenbank aus ")
 args = parser.parse_args()
 
@@ -94,6 +94,8 @@ class AddressDatabase:
 
     def get_field(self, data):
         self.cursor.execute("SELECT ~ FROM Adressen WHERE Id = ?".replace("~", data[0]), data[1])
+        row = self.cursor.fetchall()
+        print(row[0])
 
     def names(self, data):
         self.cursor.execute("SELECT Id, Firstname, Lastname FROM Adressen "
@@ -164,10 +166,15 @@ class Abfragen:
         if self.list is True:
             AddressDatabase.list()
         # get
-        if self.get:
+        if self.get and self.full is None and self.field is None:
             AddressDatabase.get_name(data=([self.get]))
-            if self.full:
-                AddressDatabase.get_full(data=([self.get]))
+
+        elif self.get and self.full:
+            AddressDatabase.get_full(data=([self.get]))
+
+        elif self.get and self.field:
+            AddressDatabase.get_field(data=(self.field, [self.get]))
+
 
 Abfragen(args)
 Adressen(args)

@@ -23,6 +23,8 @@ parser.add_argument("--full", action="store_true", help="Gibt die eine ganze zei
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
 parser.add_argument("--field", help="Gibt ein beszimmten wert aus")
 parser.add_argument("--list", action="store_true", help="Gibt die Datenbank aus ")
+parser.add_argument("--search", action="store_true", help="Bestimmte Sachen suchen ")
+parser.add_argument("--today", action="store_true", help="Gibt an wer heute Geburtstag hat")
 args = parser.parse_args()
 
 # print(info.action_tub)
@@ -46,6 +48,10 @@ class AddressDatabase:
         """Closes the cursor"""
         self.cursor.close()
 
+    def __add__(self, other):
+        pass
+
+
     def create_table(self):
         """create a database table if it does not exist already"""
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,6 +73,7 @@ class AddressDatabase:
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
                                 Place,Landline,Mobile,Mail) VALUES(NULL,?,?,?,?,?,?,
                                 ?,?,?,?);""", data)
+
 
     def get_name(self, data):
         """Prints the names and the id"""
@@ -98,27 +105,35 @@ class AddressDatabase:
         row = self.cursor.fetchall()
         print(row[0])
 
-    def search_names(self, data):
+    def names(self, data):
         """Is nearly the same as get_names but with like and its ordered"""
         self.cursor.execute("SELECT Id, Firstname, Lastname FROM Adressen "
                             "WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                             "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                             "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                             "ORDER BY lastname,firstname DESC", data)
+        row = self.cursor.fetchall()
+        print(row)
 
-    def search_field(self, data):
+    def field(self, data):
+        print(data)
         """Is nearly the same as get_field but with like and its ordered"""
         self.cursor.execute("SELECT ~ FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                     "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                     "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
-                    "ORDER BY lastname,firstname DESC".replace("~",data[0]),data[1])
+                    "ORDER BY lastname,firstname DESC".replace("~",data[1]),data[0])
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(row)
 
-    def search_full(self, data):
+    def full(self, data):
         """Is nearly the same as get_full but with like and its ordered"""
         self.cursor.execute("SELECT * FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                      "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                      "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                      "ORDER BY lastname,firstname DESC", data)
+        row = self.cursor.fetchall()
+        print(row)
 
     def delete(self, data):
         """Delets the line with the Id"""
@@ -126,7 +141,11 @@ class AddressDatabase:
 
     def update(self, data):
         """Updates the table"""
-        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[1]),data)
+        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[3]),data)
+
+    def search(self, data):
+        """Searches for a line"""
+        self.cursor.execute("""SELECT ? FROM Adressen WHERE Id = ?""".replace("?",data[0]),data )
 
     def list(self):
         """Outputs the whole Database"""
@@ -141,19 +160,27 @@ AddressDatabase.create_table()
 
 class Adressen:
     def __init__(self, args):
-        self.action_tup = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
-                           args.place, args.landline, args.mobile, args.mail)
 
-        self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
-                           "street": args.street, "number": args.number, "postal_code": args.postal_code,
-                           "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
+        self.action_list = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
+                           args.place, args.landline, args.mobile, args.mail)
+        self.action_tup = []
+        for element in self.action_list:
+            if element is None:
+                element = "/"
+                self.action_tup.append(element)
+            else:
+                self.action_tup.append(element)
+
         # insert
         if self.action_tup[0] and self.action_tup[1] and len(
-                tuple(itertools.filterfalse("/", self.action_tup))) < 8:
+                tuple(itertools.filterfalse(None, self.action_tup))) < 8:
             AddressDatabase.insert(data=self.action_tup)
         elif self.action_tup[0] and self.action_tup[1] and len(
-                tuple(itertools.filterfalse("/", self.action_tup))) < 9:
+                tuple(itertools.filterfalse(None, self.action_tup))) < 9:
             print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
+
+
+
 class Abfragen:
     def __init__(self, args):
         self.args = args
@@ -164,6 +191,10 @@ class Abfragen:
         self.names = args.names
         self.field = args.field
         self.list = args.list
+        self.search = args.search
+        self.today = args.today
+        self.action_list = [args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
+                           args.place, args.landline, args.mobile, args.mail]
         # Delete
         if self.delete:
             AddressDatabase.delete(data=([self.delete]))
@@ -179,7 +210,24 @@ class Abfragen:
 
         if self.get and self.field:
             AddressDatabase.get_field(data=(self.field, [self.get]))
+        if self.search:
+            self.info = []
+            for element in self.action_list:
+                if element:
+                    element = str(element).replace("*", "%")
+                    self.info.append(element)
+                else:
+                    self.info.append("%")
+
+            AddressDatabase.full(data=(self.info))
+        if self.search and self.field:
+
+            AddressDatabase.field(data=(self.info, self.field))
 
 
-Abfragen(args)
+
+
+
 Adressen(args)
+Abfragen(args)
+

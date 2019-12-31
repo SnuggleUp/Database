@@ -1,7 +1,7 @@
 import argparse
-import itertools
 import sqlite3
 import datetime
+today = "%" + str(datetime.datetime.today()).split(" ")[0][4:]
 
 # Eingabe
 parser = argparse.ArgumentParser()
@@ -26,11 +26,6 @@ parser.add_argument("--list", action="store_true", help="Gibt die Datenbank aus 
 parser.add_argument("--search", action="store_true", help="Bestimmte Sachen suchen ")
 parser.add_argument("--today", action="store_true", help="Gibt an wer heute Geburtstag hat")
 args = parser.parse_args()
-
-# print(info.action_tub)
-# print(info.action_dic["lastname"], )
-# ToDo
-# Multible inserts bearbeiten
 
 
 class AddressDatabase:
@@ -105,7 +100,7 @@ class AddressDatabase:
         row = self.cursor.fetchall()
         print(row[0])
 
-    def names(self, data):
+    def search(self, data):
         """Is nearly the same as get_names but with like and its ordered"""
         self.cursor.execute("SELECT Id, Firstname, Lastname FROM Adressen "
                             "WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
@@ -125,6 +120,7 @@ class AddressDatabase:
         rows = self.cursor.fetchall()
         for row in rows:
             print(row)
+
 
     def full(self, data):
         """Is nearly the same as get_full but with like and its ordered"""
@@ -188,7 +184,7 @@ class Abfragen:
         self.delete = args.delete
         self.get = args.get
         self.full = args.full
-        self.names = args.names
+        self.names = args.search
         self.field = args.field
         self.list = args.list
         self.search = args.search
@@ -201,13 +197,13 @@ class Abfragen:
         # complete database
         if self.list is True:
             AddressDatabase.list()
-        # get
+        # get names
         if self.get and self.full is False and self.field is None:
             AddressDatabase.get_name(data=([self.get]))
-
+        # get full
         if self.get and self.full:
             AddressDatabase.get_full(data=([self.get]))
-
+        # get field
         if self.get and self.field:
             AddressDatabase.get_field(data=(self.field, [self.get]))
         # search
@@ -218,22 +214,23 @@ class Abfragen:
                 self.info.append(element)
             else:
                 self.info.append("%")
+
         # just search
         if self.search and self.full is False and self.field is None:
-            AddressDatabase.names(data=(self.info))
+            AddressDatabase.search(data=(self.info))
         # search with field
         if self.search and self.field and self.full is False:
-
             AddressDatabase.field(data=(self.info, self.field))
+
         # search with full
         if self.search and self.full and self.field is None:
-
             AddressDatabase.full(data=self.info)
 
         #Update
         self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
                            "street": args.street, "number": args.number, "postal_code": args.postal_code,
                            "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
+
         data_info = self.action_dic
         for element in data_info:
             if data_info.get(element):
@@ -243,8 +240,8 @@ class Abfragen:
 
         if self.update:
             AddressDatabase.update(data=((self.value, self.update), self.where))
-            print("Test")
+
+
 
 Adressen(args)
 Abfragen(args)
-

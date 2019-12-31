@@ -24,39 +24,11 @@ parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten we
 parser.add_argument("--list", action="store_true", help="Gibt die Datenbank aus ")
 args = parser.parse_args()
 
-
-class Adressen:
-    def __init__(self, args):
-        self.action_tub = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
-                           args.place, args.landline, args.mobile, args.mail)
-
-        self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
-                           "street": args.street, "number": args.number, "postal_code": args.postal_code,
-                           "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
-
-
-class Abfragen:
-    def __init__(self, args):
-        self.args = args
-        self.update = args.update
-        self.delete = args.delete
-        self.get = args.get
-        self.full = args.full
-        self.names = args.names
-        self.field = args.field
-        self.list = args.list
-
-test = Abfragen(args)  
-info = Adressen(args)
-
-print(test.delete)
-
-
 # print(info.action_tub)
 # print(info.action_dic["lastname"], )
 # ToDo
 # Multible inserts bearbeiten
-# 
+
 
 class AddressDatabase:
 
@@ -143,14 +115,37 @@ class AddressDatabase:
 
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
-if info.action_tub[0] and info.action_tub[1] and len(
-        tuple(itertools.filterfalse(None, info.action_tub))) < 8:
-    AddressDatabase.insert(data=info.action_tub)
-else:
-    print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
 
-if test.delete is not None:
-    AddressDatabase.delete(data=test.delete)
+class Adressen:
+    def __init__(self, args):
+        self.action_tup = (args.firstname, args.lastname, args.birthday, args.street, args.number, args.postal_code,
+                           args.place, args.landline, args.mobile, args.mail)
 
-if test.list is True:
-    AddressDatabase.list()
+        self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
+                           "street": args.street, "number": args.number, "postal_code": args.postal_code,
+                           "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
+        # insert
+        if self.action_tup[0] and self.action_tup[1] and len(
+                tuple(itertools.filterfalse(None, self.action_tup))) < 8:
+            AddressDatabase.insert(data=self.action_tup)
+        else:
+            print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
+class Abfragen:
+    def __init__(self, args):
+        self.args = args
+        self.update = args.update
+        self.delete = args.delete
+        self.get = args.get
+        self.full = args.full
+        self.names = args.names
+        self.field = args.field
+        self.list = args.list
+        # Delete
+        if self.delete is not None:
+            AddressDatabase.delete(data=self.delete)
+        # complete database
+        if self.list is True:
+            AddressDatabase.list()
+
+Abfragen(args)
+Adressen(args)

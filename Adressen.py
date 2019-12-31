@@ -8,16 +8,16 @@ parser.add_argument("--firstname", help="Vorname", )
 parser.add_argument("--lastname", help="Nachname", )
 parser.add_argument("--street", help="Staße", )
 parser.add_argument("--number", help="Hausnumemr", )
-parser.add_argument("--postal-code", help="Postleitzahl", type=int)
+parser.add_argument("--postal-code", "-PLZ", help="Postleitzahl", type=int)
 parser.add_argument("--place", help="Ort", )
-parser.add_argument("--birthday", help="Das Geburtsdatum in YY-MM-DD", )
+parser.add_argument("--birthday", help="Das Geburtsdatum in YYYY-MM-DD", )
 parser.add_argument("--landline", help="Festnetznummer", )
 parser.add_argument("--mobile", help="Handynummer", )
 parser.add_argument("--mail", help="E-Mail", )
 # Abfragen
 parser.add_argument("--update", action="store_true", help="hinzufügen")
-parser.add_argument("--delete", help="etwas löschen", )
-parser.add_argument("--get", help="?", )
+parser.add_argument("--delete", "-del", help="etwas löschen", )
+parser.add_argument("--get", help="Gibt zu einer ID den Vornamen und Nachnamen aus ", type=int)
 parser.add_argument("--full", action="store_true", help="Gibt die eine ganze zeile aus")
 parser.add_argument("--names", action="store_true", help="Gibt die Id´s der Personen aus")
 parser.add_argument("--field", action="store_true", help="Gibt ein beszimmten wert aus")
@@ -52,7 +52,7 @@ class AddressDatabase:
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS Adressen (Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                              Firstname VARCHAR (50),
                                              Lastname VARCHAR(50),
-                                             Birthday Varchar(50),
+                                             Birthday DATE ,
                                              Street VARCHAR (50),
                                              Number VARCHAR(50),
                                              Postalcode VARCHAR(50),
@@ -71,10 +71,26 @@ class AddressDatabase:
         print(data)
 
     def get_name(self, data):
-        self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen WHERE Id = ?""",data)
+        self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen WHERE Id = ?""", data)
+        row = self.cursor.fetchall()
+        id_info = row[0]
+        print(id_info[0], id_info[1], id_info[2])
 
     def get_full(self, data):
         self.cursor.execute("""SELECT * FROM Adressen where Id = ? """,data)
+        row = self.cursor.fetchall()
+        id_info = row[0]
+        print("Id:", id_info[0],
+              "Firstname:", id_info[1],
+              "Lastname:", id_info[2],
+              "Birthday:", id_info[3],
+              "Street:", id_info[4],
+              "Number:", id_info[5],
+              "Postalcode:", id_info[6],
+              "Place:", id_info[7],
+              "Landline:", id_info[8],
+              "Mobile:", id_info[9],
+              "Mail:", id_info[10])
 
     def get_field(self, data):
         self.cursor.execute("SELECT ~ FROM Adressen WHERE Id = ?".replace("~", data[0]), data[1])
@@ -128,7 +144,8 @@ class Adressen:
         if self.action_tup[0] and self.action_tup[1] and len(
                 tuple(itertools.filterfalse(None, self.action_tup))) < 8:
             AddressDatabase.insert(data=self.action_tup)
-        else:
+        elif self.action_tup[0] and self.action_tup[1] and len(
+                tuple(itertools.filterfalse(None, self.action_tup))) < 9:
             print("Sie müssen Vorname, Nachname und ein weiteres Attribut angeben")
 class Abfragen:
     def __init__(self, args):
@@ -141,11 +158,16 @@ class Abfragen:
         self.field = args.field
         self.list = args.list
         # Delete
-        if self.delete is not None:
-            AddressDatabase.delete(data=self.delete)
+        if self.delete:
+            AddressDatabase.delete(data=([self.delete]))
         # complete database
         if self.list is True:
             AddressDatabase.list()
+        # get
+        if self.get:
+            AddressDatabase.get_name(data=([self.get]))
+            if self.full:
+                AddressDatabase.get_full(data=([self.get]))
 
 Abfragen(args)
 Adressen(args)

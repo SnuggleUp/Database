@@ -103,7 +103,7 @@ class AddressDatabase:
         row = self.cursor.fetchall()
         print(row[0])
 
-    def names(self, data):
+    def search_names(self, data):
         """Is nearly the same as get_names but with like and its ordered"""
         self.cursor.execute("SELECT Id, Firstname, Lastname FROM Adressen "
                             "WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
@@ -111,14 +111,14 @@ class AddressDatabase:
                             "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                             "ORDER BY lastname,firstname DESC", data)
 
-    def field(self, data):
+    def search_field(self, data):
         """Is nearly the same as get_field but with like and its ordered"""
         self.cursor.execute("SELECT ~ FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                     "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                     "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                     "ORDER BY lastname,firstname DESC".replace("~",data[0]),data[1])
 
-    def full(self, data):
+    def search_full(self, data):
         """Is nearly the same as get_full but with like and its ordered"""
         self.cursor.execute("SELECT * FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                      "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
@@ -132,10 +132,6 @@ class AddressDatabase:
     def update(self, data):
         """Updates the table"""
         self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[3]),data)
-
-    def search(self, data):
-        """Searches for a line"""
-        self.cursor.execute("""SELECT ? FROM Adressen WHERE Id = ?""".replace("?",data[0]),data )
 
     def list(self):
         """Outputs the whole Database"""

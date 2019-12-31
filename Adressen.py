@@ -16,7 +16,7 @@ parser.add_argument("--landline", help="Festnetznummer", )
 parser.add_argument("--mobile", help="Handynummer", )
 parser.add_argument("--mail", help="E-Mail", )
 # Abfragen
-parser.add_argument("--update", action="store_true", help="hinzufügen")
+parser.add_argument("--update", type=int, help="id angeben um id der zeile was zuverändern ")
 parser.add_argument("--delete", "-del", help="etwas löschen", )
 parser.add_argument("--get", help="Gibt zu einer ID den Vornamen und Nachnamen aus ", type=int)
 parser.add_argument("--full", action="store_true", help="Gibt die eine ganze zeile aus")
@@ -112,11 +112,11 @@ class AddressDatabase:
                             "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                             "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                             "ORDER BY lastname,firstname DESC", data)
-        row = self.cursor.fetchall()
-        print(row)
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(row)
 
     def field(self, data):
-        print(data)
         """Is nearly the same as get_field but with like and its ordered"""
         self.cursor.execute("SELECT ~ FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                     "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
@@ -132,20 +132,20 @@ class AddressDatabase:
                      "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                      "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                      "ORDER BY lastname,firstname DESC", data)
-        row = self.cursor.fetchall()
-        print(row)
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(row)
 
     def delete(self, data):
+
         """Delets the line with the Id"""
         self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """, data)
 
     def update(self, data):
+        print(data[0])
+        print(data[1])
         """Updates the table"""
-        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[3]),data)
-
-    def search(self, data):
-        """Searches for a line"""
-        self.cursor.execute("""SELECT ? FROM Adressen WHERE Id = ?""".replace("?",data[0]),data )
+        self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~", data[1]), data[0])
 
     def list(self):
         """Outputs the whole Database"""
@@ -210,23 +210,40 @@ class Abfragen:
 
         if self.get and self.field:
             AddressDatabase.get_field(data=(self.field, [self.get]))
-        if self.search:
-            self.info = []
-            for element in self.action_list:
-                if element:
-                    element = str(element).replace("*", "%")
-                    self.info.append(element)
-                else:
-                    self.info.append("%")
-
-            AddressDatabase.full(data=(self.info))
-        if self.search and self.field:
+        # search
+        self.info = []
+        for element in self.action_list:
+            if element:
+                element = str(element).replace("*", "%")
+                self.info.append(element)
+            else:
+                self.info.append("%")
+        # just search
+        if self.search and self.full is False and self.field is None:
+            AddressDatabase.names(data=(self.info))
+        # search with field
+        if self.search and self.field and self.full is False:
 
             AddressDatabase.field(data=(self.info, self.field))
+        # search with full
+        if self.search and self.full and self.field is None:
+
+            AddressDatabase.full(data=self.info)
+
+        #Update
+        self.action_dic = {"firstname": args.firstname, "lastname": args.lastname, "birthday": args.birthday,
+                           "street": args.street, "number": args.number, "postal_code": args.postal_code,
+                           "place": args.place, "landlline": args.landline, "mobile": args.mobile, "mail": args.mail}
+        data_info = self.action_dic
+        for element in data_info:
+            if data_info.get(element):
+                self.value = data_info.get(element)
+                self.where = element
 
 
-
-
+        if self.update:
+            AddressDatabase.update(data=((self.value, self.update), self.where))
+            print("Test")
 
 Adressen(args)
 Abfragen(args)

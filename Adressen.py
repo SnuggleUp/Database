@@ -166,13 +166,13 @@ class Abfragen:
         if self.list is True:
             AddressDatabase.list()
         # get
-        if self.get and self.full is None and self.field is None:
+        if self.get and self.full is False and self.field is None:
             AddressDatabase.get_name(data=([self.get]))
 
-        elif self.get and self.full:
+        if self.get and self.full:
             AddressDatabase.get_full(data=([self.get]))
 
-        elif self.get and self.field:
+        if self.get and self.field:
             AddressDatabase.get_field(data=(self.field, [self.get]))
 
 

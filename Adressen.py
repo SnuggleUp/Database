@@ -1,6 +1,7 @@
 import argparse
-import sqlite3
 import itertools
+import sqlite3
+import datetime
 
 # Eingabe
 parser = argparse.ArgumentParser()
@@ -33,6 +34,7 @@ args = parser.parse_args()
 class AddressDatabase:
 
     def __del__(self):
+        """Closes the connection to the db"""
         self.connection.close()
 
     def __init__(self):
@@ -41,6 +43,7 @@ class AddressDatabase:
         self.cursor = self.connection.cursor()
 
     def __exit__(self):
+        """Closes the cursor"""
         self.cursor.close()
 
     def __add__(self, other):
@@ -63,7 +66,7 @@ class AddressDatabase:
 
 
     def insert(self, data):
-        """add new data to database in one go"""
+        """adds the values in the table Adressen"""
         self.create_table()
         self.cursor.execute(""" INSERT INTO Adressen(Id, Firstname,Lastname,Birthday,Street,Number,Postalcode,
                                 Place,Landline,Mobile,Mail) VALUES(NULL,?,?,?,?,?,?,
@@ -71,12 +74,14 @@ class AddressDatabase:
         print(data)
 
     def get_name(self, data):
+        """Prints the names and the id"""
         self.cursor.execute("""SELECT Id, firstname, lastname FROM Adressen WHERE Id = ?""", data)
         row = self.cursor.fetchall()
         id_info = row[0]
         print(id_info[0], id_info[1], id_info[2])
 
     def get_full(self, data):
+        """prints the hole line from one Id"""
         self.cursor.execute("""SELECT * FROM Adressen where Id = ? """,data)
         row = self.cursor.fetchall()
         id_info = row[0]
@@ -93,11 +98,13 @@ class AddressDatabase:
               "Mail:", id_info[10])
 
     def get_field(self, data):
+        """This Program outputs the requestet values"""
         self.cursor.execute("SELECT ~ FROM Adressen WHERE Id = ?".replace("~", data[0]), data[1])
         row = self.cursor.fetchall()
         print(row[0])
 
     def names(self, data):
+        """Is nearly the same as get_names but with like and its ordered"""
         self.cursor.execute("SELECT Id, Firstname, Lastname FROM Adressen "
                             "WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                             "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
@@ -105,31 +112,38 @@ class AddressDatabase:
                             "ORDER BY lastname,firstname DESC", data)
 
     def field(self, data):
+        """Is nearly the same as get_field but with like and its ordered"""
         self.cursor.execute("SELECT ~ FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                     "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                     "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                     "ORDER BY lastname,firstname DESC".replace("~",data[0]),data[1])
 
     def full(self, data):
+        """Is nearly the same as get_full but with like and its ordered"""
         self.cursor.execute("SELECT * FROM Adressen WHERE firstname LIKE ? AND lastname LIKE ? AND street LIKE ? "
                      "AND number LIKE ? AND postalcode LIKE ? AND place LIKE ? AND birthday LIKE ? "
                      "AND landline LIKE ? AND mobile LIKE ? AND mail LIKE ? "
                      "ORDER BY lastname,firstname DESC", data)
 
     def delete(self, data):
+        """Delets the line with the Id"""
         self.cursor.execute(""" DELETE FROM Adressen WHERE Id = ? """, data)
 
     def update(self, data):
+        """Updates the table"""
         self.cursor.execute("""UPDATE Adressen SET ~ = ? WHERE Id = ? """.replace("~",data[3]),data)
 
     def search(self, data):
+        """Searches for a line"""
         self.cursor.execute("""SELECT ? FROM Adressen WHERE Id = ?""".replace("?",data[0]),data )
 
     def list(self):
+        """Outputs the whole Database"""
         self.cursor.execute("""SELECT * FROM Adressen""")
         rows = self.cursor.fetchall()
         for row in rows:
             print(row)
+
 
 AddressDatabase = AddressDatabase()
 AddressDatabase.create_table()
